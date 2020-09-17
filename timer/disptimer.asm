@@ -5,11 +5,13 @@
 	.include "cia.asm"
 
 ; constants
-kernISR = $ea31	; kernal default ISR
-vecIRQL = $0314	; pointer to low byte of ISR
-vecIRQH = $0315	; pointer to low byte of ISR
-scrRAM  = $0400
-colRAM  = $d800
+kernISR = $ea31	; kernal's default IRQ routine
+vecIRQL = $0314	; vector to low byte of IRQ routine
+vecIRQH = $0315	; vector to high byte of IRQ routine
+vecBRKL = $0316	; vector to low byte of BRK routine
+vecBRKH = $0317	; vector to high byte of BRK routine
+scrRAM  = $0400	; start of screen RAM
+colRAM  = $d800	; start of color RAM
 
 ; entry point
 *	= $0810
@@ -61,4 +63,4 @@ timerISR:
 	sta colRAM + 5	; set character color
 	inc scrRAM + 5	; indicate interrupt serviced by incrementing char
 	lda cia1ICR	; acknowledge CIA 1 IRQ
-	jmp kernISR	; kernal default ISR
+	jmp kernISR	; kernal's default IRQ routine
