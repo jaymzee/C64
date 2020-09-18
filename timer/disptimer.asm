@@ -5,6 +5,8 @@
 	.include "cia.asm"
 
 ; constants
+chrout	= $ffd2	; kernal print character
+plot	= $fff0	; kernal save or restore cursor position
 kernIRQ = $ea31	; kernal's default IRQ routine
 kernBRK = $fe66	; kernal's default BRK routine
 vecIRQL = $0314	; vector to low byte of IRQ routine
@@ -49,21 +51,47 @@ start:
 	cli		; enable interrupts
 
 main:	; display actual timer values on screen
+	ldx #0
+	ldy #0
+	clc
+	jsr plot	; set cursor to upper left corner
+
 	ldx #0		; X index for which timer register displayed
 -	lda #1		; color = white
-	sta colRAM + 0,x; set character color for first 4 chars in first row
+	sta colRAM + 5,x; set character color for first 4 chars in first row
 	lda cia1TAL,x	; read timer A-low or A-high or B-low or B-high
-	sta scrRAM + 0,x; display timer bytes as char on screen in first row
+	sta scrRAM + 5,x; display timer bytes as char on screen in first row
 	inx		; next timer byte, next char position
 	cpx #4		; if less than 4
 	bne -		;   repeat for next timer byte
-	lda cia1PrtA	; read joystick port 2
-	sta scrRAM + 7	; display joystick bits as character
-	jmp main	; else repeat timer display forever
+	lda cia1PrtA	; read joystick port 2 bits
+	jsr print_hex	; display joystick port 2 bits
+	jmp main	; repeat timer display loop
+
+print_hex:
+	pha		; save a copy of A for later
+	.rept 4
+	lsr		; select upper nibble
+	.next
+	cmp #10		; if A < 10
+	blt +		;   A += 0x30 (convert to ASCII 0 thru 9)
+	clc		; else
+	adc #7		;   A += 0x37 (convert to ASCII A thru F)
++	adc #$30
+	jsr chrout	; print upper nibble
+	pla		; restore original A
+	and #$f		; select lower nibble
+	cmp #10		; if A < 10
+	blt +		;   A += 0x30 (convert to ASCII 0 thru 9)
+	clc		; else
+	adc #7		;   A += 0x37 (convert to ASCII A thru F)
++	adc #$30	
+	jsr chrout	; print lower nibble
+	rts
 
 timerISR:
 	lda #1		; color = white
-	sta colRAM + 5	; set character color
-	inc scrRAM + 5	; indicate interrupt serviced by incrementing char
+	sta colRAM + 10	; set character color
+	inc scrRAM + 10	; indicate interrupt serviced by incrementing char
 	lda cia1ICR	; acknowledge CIA 1 IRQ
 	jmp kernIRQ	; kernal's default IRQ routine
