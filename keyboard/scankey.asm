@@ -65,19 +65,20 @@ start	ldx #00		; print greeting
 	cli		; enable interrupts
 	rts		; back to BASIC
 
-; activate column in A then display keyboard matrix row bits as hex digits
+; write columns in reg A onto CIA 1 port A 
+; display keyboard matrix rows (CIA 1 port B) as hexadecimal digits
 dispkey sta cia1PrtA	; activate column
-	lda cia1PrtB	; read row
+	lda cia1PrtB	; read rows
 	eor #$ff
 	jsr printh	; print 1's complement of row bits
 	eor #$ff
-	pha		; save row byte
+	pha		; save rows
 	lda #$20
 	jsr chrout	; print space
-	pla		; restore row byte
+	pla		; restore rows
 	rts
 
-; print byte in A as hex
+; print byte in reg A as hex
 printh	pha		; save byte for later
 	.rept 4
 	lsr		; select upper nibble
