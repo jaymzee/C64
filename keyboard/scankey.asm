@@ -1,4 +1,4 @@
-; This program waits until the key "S" was pushed.
+; display keyboard scans until the Q key is pressed
 ; assemble with 64tass
 ; start with SYS 49152
 
@@ -20,8 +20,6 @@
 ; constants
 chrout	= $ffd2		; print character kernal routine
 plot	= $fff0		; save/restore cursor kernal routine
-scrRAM	= $0400		; start of screen memory
-colRAM	= $d800		; start of color RAM
 
 ; entry point
 *	= $c000
@@ -39,25 +37,47 @@ start	ldx #00		; print greeting
 	lda #%00000000	; CIA#1 port B = inputs
 	sta cia1DirB
 
--	clc		; plot restore cursor
-	ldx #00		; row of screen
-	ldy #01		; column of screen
+-	clc		; restore cursor
+	ldx #01		; cursor row
+	ldy #05		; cursor column
 	jsr plot
 
-	lda #%11111101	; testing column 1 (COL1) of the matrix
-	sta cia1PrtA	; write column
-	lda cia1PrtB	; read row
-	eor #$ff
-	jsr printh
-	sta scrRAM + 4
-	eor #$ff
-	and #%00100000	; masking row 5 (ROW5) 
-	bne -		; wait until key "S" 
-
-	lda #%11111111	; unselect all columsn of the matrix
+	lda #%01111111	; column 7
+	jsr dispkey
+	and #%01000000	; masking row 6
+	beq +		; wait until key "Q" 
+	lda #%11111101	; column 1
+	jsr dispkey
+	lda #%11111011	; column 2
+	jsr dispkey
+	lda #%11110111	; column 3
+	jsr dispkey
+	lda #%11101111	; column 4
+	jsr dispkey
+	lda #%11011111	; column 5
+	jsr dispkey
+	lda #%10111111	; column 6
+	jsr dispkey
+	lda #%11111110	; column 0
+	jsr dispkey
+	jmp -
++	lda #%11111111	; unselect all columns of the matrix
 	cli		; enable interrupts
 	rts		; back to BASIC
 
+; activate column in A then display keyboard matrix row bits as hex digits
+dispkey sta cia1PrtA	; activate column
+	lda cia1PrtB	; read row
+	eor #$ff
+	jsr printh	; print 1's complement of row bits
+	eor #$ff
+	pha		; save row byte
+	lda #$20
+	jsr chrout	; print space
+	pla		; restore row byte
+	rts
+
+; print byte in A as hex
 printh	pha		; save byte for later
 	.rept 4
 	lsr		; select upper nibble
@@ -82,5 +102,7 @@ printh	pha		; save byte for later
 	pla		; restore byte
 	rts
 
-msg	.text $93,"$     KEYBOARD SCAN", $0d,"      PRESS S KEY TO QUIT"
+msg	.text $93,"ROW   7  1  2  3  4  5  6  0",$0d
+        .text "COL",$0d
+	.text "KEYBOARD SCAN, PRESS Q KEY TO QUIT"
 msglen	= * - msg
