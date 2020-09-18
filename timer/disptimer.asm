@@ -5,7 +5,8 @@
 	.include "cia.asm"
 
 ; constants
-kernISR = $ea31	; kernal's default IRQ routine
+kernIRQ = $ea31	; kernal's default IRQ routine
+kernBRK = $fe66	; kernal's default BRK routine
 vecIRQL = $0314	; vector to low byte of IRQ routine
 vecIRQH = $0315	; vector to high byte of IRQ routine
 vecBRKL = $0316	; vector to low byte of BRK routine
@@ -56,11 +57,13 @@ main:	; display actual timer values on screen
 	inx		; next timer byte, next char position
 	cpx #4		; if less than 4
 	bne -		;   repeat for next timer byte
-	beq main	; else repeat timer display forever
+	lda cia1PrtA	; read joystick port 2
+	sta scrRAM + 7	; display joystick bits as character
+	jmp main	; else repeat timer display forever
 
 timerISR:
 	lda #1		; color = white
 	sta colRAM + 5	; set character color
 	inc scrRAM + 5	; indicate interrupt serviced by incrementing char
 	lda cia1ICR	; acknowledge CIA 1 IRQ
-	jmp kernISR	; kernal's default IRQ routine
+	jmp kernIRQ	; kernal's default IRQ routine
