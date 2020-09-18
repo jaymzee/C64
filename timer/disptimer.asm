@@ -56,11 +56,14 @@ main:	; display actual timer values on screen
 	clc
 	jsr plot	; set cursor to upper left corner
 
-	ldx #0		; X index for which timer register displayed
+	ldx #0		; X index for which timer register is displayed
 -	lda #1		; color = white
-	sta colRAM + 5,x; set character color for first 4 chars in first row
+	sta colRAM +15,x; set character color for first 4 chars in first row
 	lda cia1TAL,x	; read timer A-low or A-high or B-low or B-high
-	sta scrRAM + 5,x; display timer bytes as char on screen in first row
+	sta scrRAM +15,x; display timer bytes as char on screen (DMA)
+	jsr print_hex	; display timer bytes as hex (kernal chrout)
+	lda #$20
+	jsr chrout
 	inx		; next timer byte, next char position
 	cpx #4		; if less than 4
 	bne -		;   repeat for next timer byte
@@ -91,7 +94,7 @@ print_hex:
 
 timerISR:
 	lda #1		; color = white
-	sta colRAM + 10	; set character color
-	inc scrRAM + 10	; indicate interrupt serviced by incrementing char
+	sta colRAM + 20	; set character color
+	inc scrRAM + 20	; indicate interrupt serviced by incrementing char
 	lda cia1ICR	; acknowledge CIA 1 IRQ
 	jmp kernIRQ	; kernal's default IRQ routine
