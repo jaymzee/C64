@@ -42,24 +42,14 @@ start	ldx #00		; print greeting
 	ldy #05		; cursor column
 	jsr plot
 
-	lda #%01111111	; column 7
+	.for c in 7, 1, 2, 3, 4, 5, 6, 0
+	lda #2**c ^ $ff
 	jsr dispkey
+	.if c == 7
 	and #%01000000	; masking row 6
 	beq +		; wait until key "Q" 
-	lda #%11111101	; column 1
-	jsr dispkey
-	lda #%11111011	; column 2
-	jsr dispkey
-	lda #%11110111	; column 3
-	jsr dispkey
-	lda #%11101111	; column 4
-	jsr dispkey
-	lda #%11011111	; column 5
-	jsr dispkey
-	lda #%10111111	; column 6
-	jsr dispkey
-	lda #%11111110	; column 0
-	jsr dispkey
+	.fi
+	.next
 	jmp -
 +	lda #%11111111	; unselect all columns of the matrix
 	cli		; enable interrupts
@@ -103,7 +93,7 @@ printh	pha		; save byte for later
 	pla		; restore byte
 	rts
 
-msg	.text $93,"ROW   7  1  2  3  4  5  6  0",$0d
-        .text "COL",$0d
+msg	.text $93, "ROW   7  1  2  3  4  5  6  0", $0d
+        .text "COL", $0d
 	.text "KEYBOARD SCAN, PRESS Q KEY TO QUIT"
 msglen	= * - msg
