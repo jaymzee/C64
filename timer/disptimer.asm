@@ -50,23 +50,45 @@ start:
 
 	cli		; enable interrupts
 
-main:	; display actual timer values on screen
+	; print captions for timer values
+	ldx #0		; first row
+	ldy #0		; first column
+	clc
+	jsr plot
+-	lda capt1,x
+	jsr chrout
+	inx
+	cpx #capt1Len
+	bne -
 	ldx #0
-	ldy #0
+-	lda capt2,x
+	jsr chrout
+	inx
+	cpx #capt2Len
+	bne -
+	ldx #0
+-	lda capt3,x
+	jsr chrout
+	inx
+	cpx #capt3Len
+	bne -
+
+main:	; display timer values on screen
+	ldx #3		; third row
+	ldy #0		; first column
 	clc
 	jsr plot	; set cursor to upper left corner
 
-	ldx #0		; X index for which timer register is displayed
+	ldx #3		; X index for which timer register is displayed
 -	lda #1		; color = white
-	sta colRAM +15,x; set character color for first 4 chars in first row
+	sta colRAM+136,x; set character color for first 4 chars in first row
 	lda cia1TAL,x	; read timer A-low or A-high or B-low or B-high
-	sta scrRAM +15,x; display timer bytes as char on screen (DMA)
+	sta scrRAM+136,x; display timer bytes as char on screen (DMA)
 	jsr print_hex	; display timer bytes as hex (kernal chrout)
 	lda #$20
 	jsr chrout
-	inx		; next timer byte, next char position
-	cpx #4		; if less than 4
-	bne -		;   repeat for next timer byte
+	dex		; prev timer byte, prev char position
+	bpl -		;   repeat for next timer byte
 	lda cia1PrtA	; read joystick port 2 bits
 	jsr print_hex	; display joystick port 2 bits
 	jmp main	; repeat timer display loop
@@ -94,7 +116,14 @@ print_hex:
 
 timerISR:
 	lda #1		; color = white
-	sta colRAM + 20	; set character color
-	inc scrRAM + 20	; indicate interrupt serviced by incrementing char
+	sta colRAM + 143; set character color
+	inc scrRAM + 143; indicate interrupt serviced by incrementing char
 	lda cia1ICR	; acknowledge CIA 1 IRQ
 	jmp kernIRQ	; kernal's default IRQ routine
+
+capt1	.text "        CIA 1",$0d
+capt1Len = * - capt1
+capt2	.text "TIMER TIMER JOY TIMER",$0d
+capt2Len = * - capt2
+capt3	.text "BH BL AH AL P2  AABB  IRQ",$0d
+capt3Len = * - capt3
