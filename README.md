@@ -1,4 +1,4 @@
-# C64 assembly language programs
+# C64 programs
 
 **hello**    displays hello world  
 **print**    functions for printing in hexadecimal and octal  
