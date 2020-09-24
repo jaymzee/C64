@@ -5,4 +5,4 @@
 **keyboard** scans keyboard matrix by polling the CIA registers  
 **timer**    displays CIA timer and interrupts  
 **sprite**   moves a sprite across the screen  
-**sparkle**  displays a sparkly screen by constantly modifying the background color  
+**sparkle**  displays a sparkly screen by continuously modifying the bg color  
