@@ -8,6 +8,8 @@ to start the machine code monitor press **RUN/STOP + RESTORE** or enter
 When using 64MON, the warm reset vector behaves similar to the warm reset
 that **RUN/STOP + RESTORE** keypress normally does without 64MON inserted
 
+press **F7** to show a list of commands (help)
+
 ### assemble
     .A 1000 LDA #$48
     .A 1002 RTS
