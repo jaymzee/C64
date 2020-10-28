@@ -1,11 +1,12 @@
 # 64MON cartridge
 64MON is a machine code monitor cartridge for the C64
 
-to start the machine code monitor press RUN/STOP + RESTORE or enter
+to start the machine code monitor press **RUN/STOP + RESTORE** or enter
+
     SYS 32820
 
-With using 64MON a warm reset appears to behave similar to the warm reset
-that RUN/STOP + RESTORE normally does without 64MON inserted
+When using 64MON, the warm reset vector behaves similar to the warm reset
+that **RUN/STOP + RESTORE** keypress normally does without 64MON inserted
 
 ### assemble
     .A 1000 LDA #$48

@@ -1,7 +1,8 @@
-### warm reset
+### warm reset vector
     SYS 64738
 
-### warm reset (faster and won't reset colors)
+### warm reset vector 2 (faster and won't reset colors)
     SYS 64764
 
-you may also be able to warm reset by pressing RUN/STOP + RESTORE
+depending on the program running, you may also be able to warm reset
+by pressing **RUN/STOP + RESTORE**
