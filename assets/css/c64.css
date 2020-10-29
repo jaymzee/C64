@@ -1,0 +1,90 @@
+@font-face {
+    font-family: "C64 Pro Mono Local";
+    src: url("../fonts/C64_Pro_Mono-STYLE.woff") format("woff");
+}
+
+html {
+    font: normal 12pt/32px "C64 Pro Mono Local", verdana, helvetica, sans-serif;
+    letter-spacing: 0px;
+    line-height: 16px;
+    color: #8f8;
+    background-color: #000;
+}
+
+.black   { color: #fff; }
+.white   { color: #fff; }
+.ltgray  { color: #666; }
+.ltgreen { color: #8f8; }
+.green   { color: rgb(99, 138, 75); }
+
+.bk_black   { display: inline-block; background-color: #000; }
+.bk_white   { display: inline-block; background-color: #fff; }
+.bk_ltgreen { display: inline-block; background-color: #8f8; }
+.bk_green   { display: inline-block; background-color: rgb(99, 138, 75); }
+.bk_ltgray  { display: inline-block; background-color: #666; }
+
+h1 {
+    font-size: 30pt;
+}
+
+a {
+    color: #ff8;
+}
+
+body {
+}
+
+div#logo {
+    background-image: url('nybblesandbytes.png');
+    width: 104px;
+    height: 42px;
+    float: right;
+    margin: 24px 24px 8px 8px;
+}
+
+div#border {
+    position: relative;
+    background-color: #8f8;
+    padding: 64px;
+    margin: auto auto auto auto;
+    width: 640px;
+    min-height: 400px;
+}
+
+div#container {
+    background-color: #666;
+    margin: 0px auto 0px auto;
+    width: 640px;
+    min-height: 400px;
+    max-height: 400px;
+    height: 400px;
+    overflow: scroll;
+    white-space: pre;
+}
+
+div#full-border {
+    position: relative;
+    background-color: #8f8;
+    padding: 64px;
+    margin: auto auto auto auto;
+}
+
+div#full-container {
+    background-color: #666;
+    margin: 0px auto 0px auto;
+    overflow: scroll;
+    white-space: pre;
+    width: 100%;
+}
+
+div#cursor {
+    position: relative;
+    display: inline-block;
+    opacity: 100;
+    width: 16px;
+    height: 18px;
+    background-color: #8f8;
+    margin: 0px;
+    padding: 0px;
+    bottom: -2px;
+}
